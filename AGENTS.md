@@ -26,7 +26,8 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 - `results/mutations.csv`, `results/summary.csv` remain empty placeholders.
 - `data-collection/data/raw/` and `processed/` hold a real 405 MB dataset and are
   git-ignored; `data-collection/data/checksums/` is committed.
-- No tests directory, no CI, no lint config.
+- Small real fixtures live in `data-collection/tests/data/` (`.fasta`, `.fasta.gz`,
+  `.zip`). There is still no test runner, no CI and no lint config.
 
 **Consequence:** there is no established test suite to imitate. When you implement
 an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only,
@@ -49,17 +50,44 @@ an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only
 | `analyze_mutations.py` | Detect mutations/variants vs. reference (Phase 3) | yes |
 | `statistics.py` | Aggregate stats + figures into `results/figures/` (Phase 4) | yes |
 | `run.sh` | Orchestrator for the analysis stages | yes |
+| `data-collection/tests/data/` | Real 2-record fixtures for the local pathway | yes |
 | `data/` | Legacy root data dir (only `.gitkeep`) | **no** |
 | `results/` | Machine-readable outputs (`mutations.csv`, `summary.csv`) | headers only |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
 | `report/report.md` | Human-readable final report | yes |
 | `SOURCES.md` | Provenance: URLs, accessions, retrieval dates | yes |
 
+### Phase 1 output contract (consume this in later stages)
+
+Everything downstream must read from **`data-collection/data/processed/`** and
+must not re-implement retrieval:
+
+| File | Format | Notes |
+|---|---|---|
+| `sequences.fasta` | FASTA | 142,254 records, 131,955,960 nt, 140 MB |
+| `metadata.csv` | CSV | 142,254 rows, same order as the FASTA |
+| `manifest.json` | JSON | record count + SHA-256 of the outputs |
+
+`metadata.csv` columns, in order: `accession, length, completeness, is_annotated,
+gene_count, protein_count, source_database, release_date, update_date,
+organism_name, tax_id, isolate, lineage, submitter`.
+
+Key facts agents must not re-derive by hand:
+
+- The dataset is **family-wide** (*Hepadnaviridae*, taxid 10404): 140,866 records
+  (99.0 %) are HBV, 1,388 (1.0 %) are other hepadnaviruses. Filter with
+  `'Hepatitis B virus' in row['lineage']` if a stage needs HBV only.
+- 128,154 records are `PARTIAL`, 14,100 are `COMPLETE`.
+- The HBV reference genome for mutation calling is `NC_003977.2`.
+- Full provenance and checksums: `data-collection/dataset_documentation.md`.
+
 ## 4. Ground rules
 
-1. **Never commit data.** `data/` is git-ignored in spirit and must stay out of git.
-   Do not `git add data/*` even if `.gitignore` is missing — add a `.gitignore` entry instead
-   (`data/*`, `!data/.gitkeep`, plus `__pycache__/`, `*.pyc`, `.venv/`).
+1. **Never commit data.** Raw and normalised data must stay out of git:
+   `data-collection/data/raw/`, `data-collection/data/processed/`, and `data/*`.
+   `.gitignore` already covers these; verify with `git status --short --ignored`
+   before committing. Only `.gitkeep` and `data-collection/data/checksums/` are tracked.
+   Do not force-add ignored data with `git add -f`.
 2. **`results/` is generated, never hand-edited.** Regenerate by running the pipeline.
    Keep the files tracked (headers only) so the expected schema is visible.
 3. **Provenance matters.** Any downloaded sequence must be recorded in `SOURCES.md`
@@ -72,6 +100,15 @@ an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only
    raise/exit non-zero on missing inputs in Python.
 7. **Science first.** Never fabricate sequences, mutation counts, or statistics.
    If data is unavailable, report the failure — do not invent results for the report.
+8. **`download.sh` replaces the processed dataset.** Both the NCBI and `--file`
+   pathways promote their result into `data-collection/data/processed/`, overwriting
+   the previous dataset (atomically, only on success). Never run
+   `./download.sh --file ...` on a whim: it will swap the 142k-record dataset for
+   the supplied file. Use `data-collection/tests/data/` fixtures only when you
+   intend to do that, and re-run `./download.sh` afterwards to restore the full set.
+9. **Do not add network calls to tests or analysis stages.** Only
+   `src/ncbi_client.py` talks to the network. Everything else must work offline on
+   the local files.
 
 ## 5. Coding conventions
 
@@ -113,6 +150,20 @@ If you need to change a schema, update this file **and** `report/report.md` in t
 Work on the branch matching your stage. Do not push to `main` directly, and do not
 rewrite or force-push shared branches.
 
+### Remote write access (currently blocked)
+
+- The git remote is `https://github.com/Ghebrioudev/HBV-Genome-Pipeline.git`, owned
+  by **Ghebrioudev**. The configured account (`berkal749`) has `push: false`, so
+  every push — including creating new branches — returns HTTP 403.
+- Work locally and commit; pushing is deferred until access changes (switch `gh`
+  account, add the account as a collaborator, or push to a fork).
+- `origin/feature/data-collection` is an **unrelated history** containing only
+  `README.md` and is 1 commit "behind" while the local branch is ahead. Once write
+  access exists, syncing requires:
+  `git push --force-with-lease origin feature/data-collection`.
+- `origin/main` is 2 commits behind the local scaffold and never contains
+  `AGENTS.md` (by design).
+
 ## 8. Environment
 
 - Python 3.12.3, GNU bash 5.2.21 available.
@@ -123,6 +174,8 @@ rewrite or force-push shared branches.
 - If a stage needs one of these, add it to `requirements.txt` and/or document the system
   dependency in `README.md` with install instructions — do not silently assume it exists.
 - No virtualenv is present; create `.venv/` locally if needed (must be git-ignored).
+- Data is already on disk: `data-collection/data/` is ~630 MB total (436 MB raw,
+  191 MB processed). No network access is needed to work on analysis stages.
 
 ## 9. How to verify a change
 
@@ -131,15 +184,23 @@ There is no test suite yet. Until one exists:
 ```bash
 bash -n download.sh run.sh data-collection/download.sh data-collection/scripts/validate_dataset.sh
 python3 -m py_compile *.py data-collection/src/*.py
-bash run.sh                         # analysis pipeline (empty until Phase 2)
 
-# Phase 1 smoke test (small taxon, no size gate)
-./download.sh --taxon 10406 --min-mb 0
-./download.sh --file data-collection/tests/data/sample.fasta
+# dataset is intact
+(cd data-collection && sha256sum -c data/checksums/dataset.sha256)
+
+# validate the fixtures (read-only; does NOT replace the processed dataset)
+for f in data-collection/tests/data/sample.{fasta,fasta.gz,zip}; do
+  python3 data-collection/src/dataset_validator.py --dataset "$f" --min-mb 0 --size-policy warn >/dev/null && echo "ok $f"
+done
 ```
 
+> `./download.sh --file <x>` **overwrites** `data-collection/data/processed/`.
+> Use the validator above for read-only checks; only run `download.sh` when you
+> actually mean to replace the dataset.
+
 Then inspect `results/mutations.csv`, `results/summary.csv`, and `results/figures/`.
-When you add tests, put them in `tests/` and prefer `pytest`.
+`pytest` is **not installed**; if you add tests, put them in `tests/` and state the
+dependency in `requirements.txt` rather than assuming it.
 
 ## 10. Open decisions (not yet settled)
 
@@ -158,8 +219,12 @@ When you add tests, put them in `tests/` and prefer `pytest`.
 ## 11. Definition of done for a stage
 
 - Script is non-empty, runnable, and documented (usage + inputs + outputs).
-- Reads only from `data/` (or documented inputs) and writes only to `results/`,
-  `results/figures/`, or `report/`.
+- Reads only from `data-collection/data/processed/` (or documented inputs) and
+  writes only to `results/`, `results/figures/`, or `report/`.
 - Failure modes exit non-zero with an actionable message.
-- `SOURCES.md` / `README.md` updated if data sources or dependencies changed.
-- No generated data or large files staged for commit.
+- Outputs are written atomically or staged, so a failed run does not corrupt a
+  previous good result.
+- `SOURCES.md` / `README.md` / `dataset_documentation.md` updated if data sources,
+  schemas or dependencies changed.
+- No generated data or large files staged for commit; `git status --short --ignored`
+  shows data as ignored.

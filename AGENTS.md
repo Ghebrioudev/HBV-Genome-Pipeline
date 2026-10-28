@@ -17,35 +17,43 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 
 ## 2. Current state (important)
 
-This repository is an **initialized scaffold, not a working pipeline.**
+**Phase 1 (data collection) is implemented; the analysis stages are still empty.**
 
-- All entry-point scripts exist but are **empty (0 bytes)**: `download.sh`,
-  `preprocess.py`, `analyze_mutations.py`, `statistics.py`, `run.sh`.
-- `SOURCES.md` and `report/report.md` are also empty.
-- Output files exist but are **empty placeholders**: `results/mutations.csv`,
-  `results/summary.csv`, `results/figures/` (only `.gitkeep`).
-- `data/` contains only `.gitkeep` — no sequence data is committed.
-- No tests, no `requirements.txt`, no CI, no lint/format config.
-- Only two commits exist (`chore: initialize HBV project structure`).
+- ✅ `data-collection/` — NCBI retrieval, local-file pathway, validation,
+  checksums, documentation. `download.sh` at the root delegates to it.
+- ⬜ Empty (0 bytes): `preprocess.py`, `analyze_mutations.py`, `statistics.py`,
+  `run.sh`, `report/report.md`.
+- `results/mutations.csv`, `results/summary.csv` remain empty placeholders.
+- `data-collection/data/raw/` and `processed/` hold a real 405 MB dataset and are
+  git-ignored; `data-collection/data/checksums/` is committed.
+- No tests directory, no CI, no lint config.
 
-**Consequence:** there is no established code style, no API surface, and no test suite
-to imitate. When you implement a script, you are defining the convention. Keep it simple,
-documented, and consistent with the layout below.
+**Consequence:** there is no established test suite to imitate. When you implement
+an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only,
+`argparse`, `main()`, explicit non-zero exits, atomic output promotion).
 
 ## 3. Repository layout
 
 | Path | Purpose | Committed? |
 |---|---|---|
-| `download.sh` | Fetch reference + sample HBV sequences from public sources into `data/` | yes |
-| `preprocess.py` | Clean/filter/align sequences, produce analysis-ready inputs | yes |
-| `analyze_mutations.py` | Detect mutations/variants relative to reference | yes |
-| `statistics.py` | Aggregate stats + generate figures into `results/figures/` | yes |
-| `run.sh` | Orchestrator: runs the stages in order, stops on error | yes |
-| `data/` | Raw + intermediate sequence data | **no** (only `.gitkeep`) |
+| `download.sh` | Root entry point; delegates to `data-collection/download.sh` | yes |
+| `data-collection/download.sh` | Stage orchestrator: NCBI default, `--file` alternative | yes |
+| `data-collection/src/ncbi_client.py` | NCBI Datasets REST client (retry, atomic download) | yes |
+| `data-collection/src/file_loader.py` | Local + NCBI normalisation to `sequences.fasta` / `metadata.csv` | yes |
+| `data-collection/src/dataset_validator.py` | ZIP/FASTA/size checks + SHA-256 | yes |
+| `data-collection/scripts/validate_dataset.sh` | Standalone validation entry point | yes |
+| `data-collection/dataset_documentation.md` | Dataset provenance, scope, checksums | yes |
+| `data-collection/data/raw/`, `processed/` | Downloaded + normalised data | **no** (git-ignored) |
+| `data-collection/data/checksums/` | SHA-256 lists and validation reports | yes |
+| `preprocess.py` | Clean/filter/align sequences (Phase 2) | yes |
+| `analyze_mutations.py` | Detect mutations/variants vs. reference (Phase 3) | yes |
+| `statistics.py` | Aggregate stats + figures into `results/figures/` (Phase 4) | yes |
+| `run.sh` | Orchestrator for the analysis stages | yes |
+| `data/` | Legacy root data dir (only `.gitkeep`) | **no** |
 | `results/` | Machine-readable outputs (`mutations.csv`, `summary.csv`) | headers only |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
 | `report/report.md` | Human-readable final report | yes |
-| `SOURCES.md` | Provenance: URLs, access dates, database versions | yes |
+| `SOURCES.md` | Provenance: URLs, accessions, retrieval dates | yes |
 
 ## 4. Ground rules
 
@@ -110,6 +118,8 @@ rewrite or force-push shared branches.
 - Python 3.12.3, GNU bash 5.2.21 available.
 - **Not installed:** `blastn`, `makeblastdb`, `samtools`, `mafft`, `minimap2`,
   `pandas`, `matplotlib`, `biopython`.
+- `datasets` CLI v18.39.0 is installed at `~/.local/bin/datasets` (optional; the
+  Phase 1 code uses only the standard library and never calls it).
 - If a stage needs one of these, add it to `requirements.txt` and/or document the system
   dependency in `README.md` with install instructions — do not silently assume it exists.
 - No virtualenv is present; create `.venv/` locally if needed (must be git-ignored).
@@ -119,9 +129,13 @@ rewrite or force-push shared branches.
 There is no test suite yet. Until one exists:
 
 ```bash
-bash -n download.sh run.sh          # shell syntax check
-python3 -m py_compile *.py          # python syntax check
-bash run.sh                         # end-to-end smoke run
+bash -n download.sh run.sh data-collection/download.sh data-collection/scripts/validate_dataset.sh
+python3 -m py_compile *.py data-collection/src/*.py
+bash run.sh                         # analysis pipeline (empty until Phase 2)
+
+# Phase 1 smoke test (small taxon, no size gate)
+./download.sh --taxon 10406 --min-mb 0
+./download.sh --file data-collection/tests/data/sample.fasta
 ```
 
 Then inspect `results/mutations.csv`, `results/summary.csv`, and `results/figures/`.
@@ -133,9 +147,13 @@ When you add tests, put them in `tests/` and prefer `pytest`.
   comparison (no dependencies, works today) vs. installing MAFFT/BLAST (stronger
   multiple alignment, needs network + `apt`). Do not assume one; confirm before building
   that stage.
-- **Data source / accessions** for `download.sh` — no specific NCBI accessions or
-  reference genome have been chosen yet.
+- **Taxonomic scope for downstream stages** — the Phase 1 dataset is the
+  *Hepadnaviridae* family (taxid 10404) and contains ~1 % non-HBV records. Decide
+  whether analysis filters to HBV (`lineage` contains `Hepatitis B virus`) or keeps
+  the family.
 - **CSV schemas** in section 6 are proposals, not yet implemented or validated.
+  Phase 1 outputs (`sequences.fasta`, `metadata.csv`) are defined in
+  `data-collection/dataset_documentation.md` §7.
 
 ## 11. Definition of done for a stage
 

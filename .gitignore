@@ -1,0 +1,16 @@
+# Downloaded / generated data — never commit
+data-collection/data/raw/
+data-collection/data/processed/
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+*.swp

@@ -1,0 +1,21 @@
+{
+  "path": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/data-collection/data/raw/extracted",
+  "size_policy": "hard",
+  "warnings": [],
+  "fasta": [
+    {
+      "file": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/data-collection/data/raw/extracted/ncbi_dataset/data/genomic.fna",
+      "records": 142254,
+      "total_nt": 131955960,
+      "longest_record": 10123,
+      "sha256": "b39fe94375f8e8f3f9dfcf02e275a8f2d4c8472110a1b0e41a6a5086603eeb3a"
+    }
+  ],
+  "size_bytes": 425247290,
+  "size_mb": 405.55,
+  "records": 142254,
+  "total_nt": 131955960,
+  "ok": true,
+  "validated_at": "2026-10-28T19:18:19+00:00",
+  "checksums_file": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/data-collection/data/checksums/ncbi_extracted.sha256"
+}

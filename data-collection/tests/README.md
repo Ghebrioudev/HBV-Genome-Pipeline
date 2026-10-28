@@ -1,23 +1,43 @@
-# Test fixtures
+# Tests
 
-`sample.fasta`, `sample.fasta.gz` and `sample.zip` contain the **first two records
-of the real Phase 1 dataset** (`data/processed/sequences.fasta`), so they are real
-HBV sequences rather than synthetic ones.
-
-They exist only to exercise the local-file pathway and the validator without
-touching the full 405 MB dataset.
+Phase 1 test suite — standard library `unittest` only, fully offline.
 
 ```bash
-# validation only (does not modify the processed dataset)
-python3 src/dataset_validator.py --dataset tests/data/sample.fasta --min-mb 0 --size-policy warn
-python3 src/dataset_validator.py --dataset tests/data/sample.fasta.gz --min-mb 0 --size-policy warn
-python3 src/dataset_validator.py --dataset tests/data/sample.zip --min-mb 0 --size-policy warn
+./run_tests.sh                    # all tests
+./run_tests.sh -v
+./run_tests.sh test_ncbi_client   # one module
 ```
 
-Regenerate from the real dataset:
+| Module | What it protects |
+|---|---|
+| `test_dataset_validator.py` | FASTA / `.gz` / `.zip` parsing, IUPAC validation, empty records, the 100 MB – 1 GB size policy (`hard` vs `warn`), SHA-256 and portable checksum paths |
+| `test_file_loader.py` | local `.fasta`/`.gz`/`.zip` → `sequences.fasta` + `metadata.csv`; NCBI report mapping (camelCase and snake_case); column order; missing-package errors |
+| `test_ncbi_client.py` | request payload shape, ZIP validation, safe extraction, path-traversal rejection, retry/backoff on 429, fail-fast on 404, atomic `.part` handling. `urllib` is mocked — **no network** |
+| `test_shell_scripts.py` | `bash -n`, executable bits, `--help`, unknown arguments, missing input, and that a failed `download.sh` never modifies `data/processed/` |
+
+## Fixtures
+
+`data/sample.fasta`, `data/sample.fasta.gz` and `data/sample.zip` contain the
+**first two records of the real Phase 1 dataset**, so they are genuine HBV
+sequences, not synthetic ones.
 
 ```bash
-awk 'BEGIN{n=0} /^>/{n++} n<=2{print}' data/processed/sequences.fasta > tests/data/sample.fasta
-gzip -c tests/data/sample.fasta > tests/data/sample.fasta.gz
-(cd tests/data && zip -q sample.zip sample.fasta)
+# validate without replacing the processed dataset
+python3 ../src/dataset_validator.py --dataset data/sample.fasta --min-mb 0 --size-policy warn
 ```
+
+Regenerate from the full dataset:
+
+```bash
+awk 'BEGIN{n=0} /^>/{n++} n<=2{print}' ../data/processed/sequences.fasta > data/sample.fasta
+gzip -c data/sample.fasta > data/sample.fasta.gz
+(cd data && zip -q sample.zip sample.fasta)
+```
+
+## Adding tests
+
+- Put `test_*.py` next to these files; discovery picks them up automatically.
+- Import the modules under test through `helpers.py`, which puts `../src` on
+  `sys.path`.
+- Never perform network I/O; mock `ncbi_client.urllib.request.urlopen`.
+- Never write into `data/processed/`; use `tempfile.TemporaryDirectory()`.

@@ -26,12 +26,13 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 - `results/mutations.csv`, `results/summary.csv` remain empty placeholders.
 - `data-collection/data/raw/` and `processed/` hold a real 405 MB dataset and are
   git-ignored; `data-collection/data/checksums/` is committed.
-- Small real fixtures live in `data-collection/tests/data/` (`.fasta`, `.fasta.gz`,
-  `.zip`). There is still no test runner, no CI and no lint config.
+- Phase 1 has a dependency-free `unittest` suite: `data-collection/tests/`
+  (57 tests, offline, ~0.2 s). There is still no CI and no lint config.
 
-**Consequence:** there is no established test suite to imitate. When you implement
-an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only,
-`argparse`, `main()`, explicit non-zero exits, atomic output promotion).
+**Consequence:** Phase 1 established the conventions. When you implement an
+analysis stage, follow `data-collection/src/` (stdlib-only, `argparse`, `main()`,
+explicit non-zero exits, atomic output promotion) and add `test_*.py` modules
+alongside the existing offline suite.
 
 ## 3. Repository layout
 
@@ -51,6 +52,8 @@ an analysis stage, follow the conventions in `data-collection/src/` (stdlib-only
 | `statistics.py` | Aggregate stats + figures into `results/figures/` (Phase 4) | yes |
 | `run.sh` | Orchestrator for the analysis stages | yes |
 | `data-collection/tests/data/` | Real 2-record fixtures for the local pathway | yes |
+| `data-collection/tests/test_*.py` | Phase 1 unittest suite (offline, stdlib only) | yes |
+| `data-collection/tests/run_tests.sh` | Test runner | yes |
 | `data/` | Legacy root data dir (only `.gitkeep`) | **no** |
 | `results/` | Machine-readable outputs (`mutations.csv`, `summary.csv`) | headers only |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
@@ -185,22 +188,25 @@ There is no test suite yet. Until one exists:
 bash -n download.sh run.sh data-collection/download.sh data-collection/scripts/validate_dataset.sh
 python3 -m py_compile *.py data-collection/src/*.py
 
+# Phase 1 test suite (stdlib unittest, offline)
+data-collection/tests/run_tests.sh
+
 # dataset is intact
 (cd data-collection && sha256sum -c data/checksums/dataset.sha256)
-
-# validate the fixtures (read-only; does NOT replace the processed dataset)
-for f in data-collection/tests/data/sample.{fasta,fasta.gz,zip}; do
-  python3 data-collection/src/dataset_validator.py --dataset "$f" --min-mb 0 --size-policy warn >/dev/null && echo "ok $f"
-done
 ```
 
+The suite covers the validator, the local and NCBI loaders, the HTTP client
+(mocked — **no network**), and the shell CLI contract. It must stay green; add a
+test with every behaviour change.
+
 > `./download.sh --file <x>` **overwrites** `data-collection/data/processed/`.
-> Use the validator above for read-only checks; only run `download.sh` when you
-> actually mean to replace the dataset.
+> Use `dataset_validator.py` (or the fixture tests) for read-only checks; only run
+> `download.sh` when you actually mean to replace the dataset.
 
 Then inspect `results/mutations.csv`, `results/summary.csv`, and `results/figures/`.
-`pytest` is **not installed**; if you add tests, put them in `tests/` and state the
-dependency in `requirements.txt` rather than assuming it.
+Add new tests as `test_*.py` modules in `data-collection/tests/` (Phase 1) or a
+root `tests/` directory (later stages). Use `unittest`: `pytest` is **not
+installed** and must not be assumed.
 
 ## 10. Open decisions (not yet settled)
 

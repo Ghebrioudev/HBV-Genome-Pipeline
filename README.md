@@ -36,6 +36,15 @@ No third-party Python packages are required for Phase 1.
 Outputs land in `data-collection/data/`, and the full provenance is documented in
 [`data-collection/dataset_documentation.md`](data-collection/dataset_documentation.md).
 
+## Tests
+
+```bash
+data-collection/tests/run_tests.sh    # 57 tests, offline, stdlib only
+```
+
+No `pytest` or other package is required, and the suite never touches the network
+or the real dataset.
+
 ## Repository layout
 
 ```

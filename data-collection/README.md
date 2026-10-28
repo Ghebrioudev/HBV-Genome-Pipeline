@@ -89,19 +89,34 @@ integrity values are versioned.
 ./scripts/validate_dataset.sh --dataset ~/upload/hbv.fasta          # warn only
 ```
 
-## Tests / manual verification
+## Tests
+
+The suite is dependency-free (`unittest`, standard library only) and never touches
+the network or the real dataset:
+
+```bash
+./tests/run_tests.sh                  # all 57 tests (~0.2 s)
+./tests/run_tests.sh test_file_loader # one module
+```
+
+| Module | Covers |
+|---|---|
+| `test_dataset_validator.py` | FASTA/`.gz`/`.zip` parsing, IUPAC checks, empty records, size policy (hard/warn), checksums |
+| `test_file_loader.py` | local `.fasta`/`.gz`/`.zip` normalisation, NCBI report mapping (camelCase + snake_case), output contract |
+| `test_ncbi_client.py` | request payload, ZIP validation, extraction, path-traversal guard, retry/backoff (urllib mocked) |
+| `test_shell_scripts.py` | `bash -n`, `--help`, unknown args, failure paths, "failed run must not touch the dataset" |
+
+`data-collection/tests/data/` holds real 2-record fixtures; see
+[`tests/README.md`](tests/README.md).
+
+## Manual verification
 
 ```bash
 bash -n download.sh scripts/validate_dataset.sh
 python3 -m py_compile src/*.py
 
-# small dataset smoke test (fast, ~12 KB)
+# small dataset smoke test (fast, ~12 KB) — note: replaces data/processed
 ./download.sh --taxon 10406 --min-mb 0
-
-# local pathways
-./download.sh --file data-collection/tests/data/sample.fasta
-./download.sh --file data-collection/tests/data/sample.fasta.gz --min-mb 0
-./download.sh --file data-collection/tests/data/sample.zip       --min-mb 0
 ```
 
 ## Troubleshooting

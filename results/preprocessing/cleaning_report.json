@@ -1,0 +1,100 @@
+{
+  "counts": {
+    "duplicate_accession_conflict_groups": 0,
+    "duplicate_accession_conflict_records": 0,
+    "duplicate_accession_groups": 0,
+    "duplicate_accession_identical_records_removed": 0,
+    "empty_sequence_records": 0,
+    "excluded_non_hbv_records": 0,
+    "extra_records_in_identical_sequence_groups": 31288,
+    "identical_sequence_groups": 11912,
+    "input_fasta_records": 140855,
+    "input_metadata_rows": 140855,
+    "metadata_rows_without_FASTA_record": 0,
+    "records_containing_U": 0,
+    "records_containing_gap": 0,
+    "records_in_identical_sequence_groups": 43200,
+    "records_with_missing_metadata_length": 0,
+    "rejected_fasta_records": 0,
+    "rejected_report_rows": 0,
+    "retained_records": 140855,
+    "review_required_records": 0,
+    "taxonomy_classification": {
+      "hbv_candidates": 140855,
+      "non_hbv_excluded": 0,
+      "unresolved": 0
+    },
+    "unique_fasta_accessions": 140855,
+    "unresolved_taxonomy_records": 0,
+    "unsupported_symbol_records": 0
+  },
+  "input": {
+    "manifest.json": {
+      "bytes": 427,
+      "path": "data-collection/data/processed/manifest.json",
+      "sha256": "ae58328401f0b8e629d168724b0b1bafe80a79ee69808db2b3cfe52bcaca0211"
+    },
+    "metadata.csv": {
+      "bytes": 52633515,
+      "path": "data-collection/data/processed/metadata.csv",
+      "sha256": "f1057b0449fefbd992ee0ffc0d10f71a9fc52eed2b9d75746eaac2637efa9930"
+    },
+    "sequences.fasta": {
+      "bytes": 143941117,
+      "path": "data-collection/data/processed/sequences.fasta",
+      "sha256": "5c7378fa127232bb54ba4faa7b58cd343d5d8e823e1092a39d6f711e37e9c483"
+    }
+  },
+  "policies": {
+    "ambiguous_symbols": "Preserved and counted; no consensus base is imputed",
+    "duplicate_accessions": "Compare exact versioned accession strings; identical copies retain the first record; conflicting sequences for one accession.version are quarantined; different versions remain distinct",
+    "gaps": "Gap-containing records are quarantined for review; no alignment gaps are removed",
+    "identical_sequences": "SHA-256 candidate grouping followed by exact sequence equality; different accessions remain retained; reverse complements are not merged",
+    "metadata_join": "Join by exact accession.version, not by CSV/FASTA row position",
+    "nucleotide_alphabet": "ACGT plus IUPAC ambiguity symbols RYSWKMBDHVN",
+    "partial_sequences": "Retain valid COMPLETE, PARTIAL and UNKNOWN records; no minimum-length threshold is applied",
+    "raw_inputs": "Task 1 files are read-only and never modified",
+    "sequence_alignment": "Not performed; alignment belongs to Task 3",
+    "taxonomic_scope": "tax_id 10407 or an NCBI lineage containing the exact Hepatitis B virus taxon; known non-HBV Hepadnaviridae are excluded; incomplete/contradictory taxonomy is reviewed",
+    "unsupported_symbols": "Reject records containing symbols outside the DNA IUPAC alphabet, U and gap",
+    "uracil": "U-containing records are quarantined for manual review; no U-to-T conversion is performed"
+  },
+  "project": "HBV Genome Pipeline",
+  "retained_ambiguity_statistics": {
+    "ambiguous_percentage": 0.392711,
+    "ambiguous_positions": 508032,
+    "counts_by_symbol": {
+      "B": 187,
+      "D": 186,
+      "H": 208,
+      "K": 6392,
+      "M": 10495,
+      "N": 443090,
+      "R": 18095,
+      "S": 3726,
+      "V": 194,
+      "W": 7088,
+      "Y": 18371
+    },
+    "records_with_ambiguity": 18268,
+    "retained_nucleotide_positions": 129365332
+  },
+  "retained_completeness_counts": {
+    "COMPLETE": 13460,
+    "PARTIAL": 127395
+  },
+  "retained_sequence_length_statistics": {
+    "count": 140855,
+    "maximum": 10123,
+    "mean": 918.4291,
+    "median": 606,
+    "minimum": 1
+  },
+  "schema_version": 1,
+  "source_manifest_created_at": "2026-11-03T14:34:40+00:00",
+  "stage": "Task 2 - Data Preprocessing",
+  "warnings": [
+    "Records with missing metadata length are retained with the original field left blank; actual sequence length is recorded separately.",
+    "A valid IUPAC ambiguity symbol is retained but may be unsuitable for a definitive mutation call at that position."
+  ]
+}

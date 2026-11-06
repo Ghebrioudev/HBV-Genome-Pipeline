@@ -1,0 +1,21 @@
+{
+  "path": "/home/ubuntu/SysProject/HBV-Genome-Pipeline/data-collection/data/raw/extracted",
+  "size_policy": "hard",
+  "warnings": [],
+  "fasta": [
+    {
+      "file": "/home/ubuntu/SysProject/HBV-Genome-Pipeline/data-collection/data/raw/extracted/ncbi_dataset/data/genomic.fna",
+      "records": 140855,
+      "total_nt": 129365332,
+      "longest_record": 10123,
+      "sha256": "5c7378fa127232bb54ba4faa7b58cd343d5d8e823e1092a39d6f711e37e9c483"
+    }
+  ],
+  "size_bytes": 420137500,
+  "size_mb": 400.67,
+  "records": 140855,
+  "total_nt": 129365332,
+  "ok": true,
+  "validated_at": "2026-11-03T14:34:33+00:00",
+  "checksums_file": "/home/ubuntu/SysProject/HBV-Genome-Pipeline/data-collection/data/checksums/ncbi_extracted.sha256"
+}

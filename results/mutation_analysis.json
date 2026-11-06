@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "stage": "Task 3 \u2014 Sequence Comparison and Mutation Detection",
+  "created_at": "2026-11-06T02:01:34.275775+00:00",
+  "started_at": "2026-11-06T01:25:31.985701+00:00",
+  "input_fasta": "/home/ubuntu/SysProject/HBV-Preprocessing-Push/data/processed/hbv_sequences.fasta",
+  "metadata_csv": "/home/ubuntu/SysProject/HBV-Preprocessing-Push/data/processed/hbv_metadata.csv",
+  "reference": {
+    "accession": "NC_003977.2",
+    "description": "NC_003977.2 Hepatitis B virus (strain ayw) genome",
+    "length_nt": 3182,
+    "coordinate_system": "1-based, ungapped reference coordinates"
+  },
+  "alignment": {
+    "tool": "MAFFT",
+    "version": "v7.525 (2024/Mar/13)",
+    "method": "--6merpair --addfragments",
+    "failure_recovery": "Failed batches are recursively split in half; individual records that still fail are logged as mafft_alignment_failed. Five consecutive singleton failures stop the run.",
+    "batch_size": 500,
+    "threads": 1,
+    "reference_anchor_preserved": true
+  },
+  "calling_policy": {
+    "minimum_input_sequence_length_nt": 100,
+    "minimum_aligned_canonical_bases": 80,
+    "minimum_pairwise_identity_percent": 70.0,
+    "partial_sequences": "Terminal unobserved coverage is not called as deletion.",
+    "ambiguous_bases": "IUPAC ambiguity symbols are emitted as uncertain, not definitive, calls.",
+    "insertions": "Between-base coordinate N^N+1; terminal insertions are not called.",
+    "deletions": "Only alignment gaps within observed reference coverage are called.",
+    "orientation": "Input orientation is retained; no automatic reverse-complement search.",
+    "circular_origin": "Linear reference coordinates; origin-spanning alignment is a limitation."
+  },
+  "counts": {
+    "input_sequences": 140855,
+    "reference_records": 1,
+    "eligible_sequences": 130837,
+    "analyzed_sequences": 128372,
+    "skipped_sequences": 12482,
+    "sequences_with_variants": 128032,
+    "alignment_batches": 262,
+    "mutation_rows": 10563024,
+    "definitive_rows": 10093576,
+    "uncertain_rows": 469448,
+    "variants_by_type": {
+      "ambiguous": 469448,
+      "deletion": 976187,
+      "insertion": 24199,
+      "substitution": 9093190
+    },
+    "skipped_by_reason": {
+      "below_min_sequence_length": 10017,
+      "identity_below_threshold": 2464,
+      "insufficient_aligned_bases": 1
+    }
+  },
+  "outputs": {
+    "mutations_csv": "/home/ubuntu/SysProject/HBV-Preprocessing-Push/results/mutations.csv",
+    "skipped_csv": "/home/ubuntu/SysProject/HBV-Preprocessing-Push/results/mutation_analysis_skipped.csv"
+  }
+}

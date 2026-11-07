@@ -46,3 +46,18 @@ from, when it was retrieved, and how it is identified.
 - NCBI content changes over time; the counts above are a snapshot and are not
   version-pinned upstream.
 - Rate limit on the virus download endpoint: 5 requests per minute per IP.
+
+### 3. MAFFT — reference-anchored fragment alignment
+
+| Field | Value |
+|---|---|
+| Tool | MAFFT 7 (minimum supported version: 7.487) |
+| Method | `--auto --addfragments` against the one-record `NC_003977.2` reference alignment |
+| Batch size | 1,000 sample fragments per invocation by default |
+| Thread count | 1 by default; configurable |
+| Documentation | https://mafft.cbrc.jp/alignment/software/addsequences.html |
+| Installation | https://mafft.cbrc.jp/alignment/software/linux.html |
+
+The exact executable version used by a run is captured in
+`results/mutation_analysis.json`. The minimum excludes MAFFT 7.463–7.486, for
+which the upstream software page documents an issue affecting `--auto`.

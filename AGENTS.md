@@ -17,14 +17,15 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 
 ## 2. Current state (important)
 
-**Phase 1 (data collection) and Phase 2 (preprocessing) are implemented; Phases 3–5 remain unimplemented.**
+**Phases 1–3 (data collection, preprocessing, and mutation detection) are implemented; Phases 4–5 remain unimplemented.**
 
 - ✅ `data-collection/` — NCBI retrieval, local-file pathway, validation,
   checksums, documentation. `download.sh` at the root delegates to it.
 - ✅ `preprocess.py` — Phase 2 preprocessing (stdlib-only); reads Task 1 processed inputs and writes cleaned HBV data plus audit reports.
-- ⬜ Empty (0 bytes): `analyze_mutations.py`, `statistics.py`, `run.sh`, `report/report.md`.
-- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/run_tests.sh` runs both Phase 1 and Phase 2 suites.
-- `results/mutations.csv`, `results/summary.csv` remain empty placeholders.
+- ✅ `analyze_mutations.py` — Task 3 reference-anchored alignment and mutation calling.
+- ⬜ Empty (0 bytes): `statistics.py`, `run.sh`, `report/report.md`.
+- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/run_tests.sh` runs all three suites.
+- `results/mutations.csv` contains the Task 3 output header; `results/summary.csv` remains the empty Task 4 placeholder.
 - The bundled Task 1 snapshot occupies approximately 431 MB under
   `data-collection/data/raw/` and 188 MB under `data-collection/data/processed/`;
   both input directories are git-ignored. Sizes vary with the retrieved snapshot.
@@ -54,14 +55,16 @@ alongside the existing offline suite.
 | `PREPROCESSING.md` | Phase 2 scientific rules, outputs and execution | yes |
 | `tests/preprocessing/` | Phase 2 offline unit tests | yes |
 | `tests/run_tests.sh` | Runs Phase 1 and Phase 2 test suites | yes |
-| `analyze_mutations.py` | Detect mutations/variants vs. reference (Phase 3) | yes |
+| `analyze_mutations.py` | MAFFT reference alignment and mutation calling (Phase 3) | yes |
+| `TASK3.md` | Phase 3 method, inputs, outputs, execution and limitations | yes |
+| `tests/task3/` | Phase 3 offline unit tests and optional MAFFT integration check | yes |
 | `statistics.py` | Aggregate stats + figures into `results/figures/` (Phase 4) | yes |
 | `run.sh` | Orchestrator for the analysis stages | yes |
 | `data-collection/tests/data/` | Real 2-record fixtures for the local pathway | yes |
 | `data-collection/tests/test_*.py` | Phase 1 unittest suite (offline, stdlib only) | yes |
 | `data-collection/tests/run_tests.sh` | Test runner | yes |
 | `data/processed/` | Generated Task 2 HBV FASTA, metadata and manifest (git-ignored) | **no** |
-| `results/` | Task 2 audit reports under `preprocessing/`; `mutations.csv` and `summary.csv` remain empty Phase 3/4 placeholders | mixed |
+| `results/` | Task 2 audit reports; Task 3 mutation table; Task 4 summary placeholder | mixed |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
 | `report/report.md` | Human-readable final report (currently empty; Phase 5 not started) | yes |
 | `SOURCES.md` | Provenance: URLs, accessions, retrieval dates | yes |
@@ -137,11 +140,13 @@ Key facts agents must not re-derive by hand:
 
 ## 6. Expected output schemas (define these if you touch them)
 
-`results/mutations.csv` — one row per detected variant:
+`results/mutations.csv` — one row per detected variant/event:
 
 ```
-sample_id,position,reference_base,alternate_base,amino_acid_change,region,gene,effect
+sample_id,reference_accession,position,reference_base,observed_base,variation_type,call_status,aligned_bases,percent_identity,completeness
 ```
+
+Coordinates are 1-based reference positions; insertions use a between-base anchor such as `125^126`. See `TASK3.md` for the precise event and uncertainty rules.
 
 `results/summary.csv` — one row per sample:
 
@@ -149,7 +154,7 @@ sample_id,position,reference_base,alternate_base,amino_acid_change,region,gene,e
 sample_id,genotype,length,num_mutations,mutations_per_kb,dominant_region
 ```
 
-If you need to change a schema, update this file **and** `report/report.md` in the same change.
+If a downstream schema changes, update this file. Reflect the corresponding interpretation in `report/report.md` when Task 5 is implemented; Task 3 does not write the final report.
 
 ## 7. Branching model
 
@@ -220,10 +225,7 @@ installed** and must not be assumed.
 
 ## 10. Open decisions (not yet settled)
 
-- **Alignment strategy** for `analyze_mutations.py` — choose a suitable alignment
-  workflow for complete and partial sequences. Task 2 deliberately does not align.
-- **Task 3 mutation scope** — decide whether comparisons are whole-genome, region-specific,
-  or both, and how ambiguous positions are handled in variant calls.
+- **Task 3 scope implemented:** whole-reference comparison to `NC_003977.2` with MAFFT `--addfragments`; partial records are eligible by configurable thresholds, terminal gaps are treated as uncovered, and IUPAC ambiguity calls are marked uncertain. See `TASK3.md`.
 
 The Task 2 taxonomic scope is resolved: retain taxid 10407 or records whose NCBI
 lineage contains the exact `Hepatitis B virus` taxon; report non-HBV family members

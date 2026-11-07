@@ -9,16 +9,17 @@ genomic data using Shell and Python.
 |---|---|---|
 | 1 | Data collection (NCBI API + local file) | ✅ implemented |
 | 2 | Preprocessing | ✅ implemented |
-| 3 | Sequence comparison / mutation detection | not started |
+| 3 | Sequence comparison / mutation detection | ✅ implemented |
 | 4 | Statistics and figures | not started |
 | 5 | Report | not started |
 
 ## Requirements
 
-- Python ≥ 3.8 (tested on 3.12.3) — **standard library only**
+- Python ≥ 3.10 (tested on 3.12.3) — **standard library only**
 - bash ≥ 4
+- MAFFT ≥ 7.487 for Task 3 (system executable)
 
-No third-party Python packages are required for Phases 1 or 2.
+No third-party Python packages are required; Task 3 uses the MAFFT command-line tool.
 
 ## Quick start
 
@@ -51,12 +52,32 @@ and IUPAC ambiguity symbols, audits accession and sequence duplicates, and does
 not perform alignment. See [`PREPROCESSING.md`](PREPROCESSING.md) for the rules,
 outputs, and command-line options.
 
+## Task 3 — Sequence comparison and mutation detection
+
+After Task 2, install MAFFT (`sudo apt update && sudo apt install mafft`) and run:
+
+```bash
+mafft --version
+python3 analyze_mutations.py
+```
+
+Task 3 aligns eligible samples to the included `NC_003977.2` RefSeq using
+MAFFT `--6merpair --addfragments` (500 sequences per batch by default, with
+automatic batch splitting after an alignment failure), then writes
+reference-coordinate substitutions,
+insertions, deletions and uncertain ambiguous-base calls to
+`results/mutations.csv`. Skipped sequences and run provenance are recorded in
+`results/mutation_analysis_skipped.csv` and `results/mutation_analysis.json`.
+See [`TASK3.md`](TASK3.md) for the alignment policy, thresholds, output schema,
+known limitations and options.
+
 ## Tests
 
 ```bash
-bash tests/run_tests.sh                 # Task 1 + Task 2 suites, offline
+bash tests/run_tests.sh                 # Task 1 + Task 2 + Task 3 suites, offline
 bash data-collection/tests/run_tests.sh # Task 1 suite only
 python3 -m unittest discover -s tests/preprocessing -v # Task 2 only
+python3 -m unittest discover -s tests/task3 -v         # Task 3 only
 ```
 
 No `pytest` or third-party Python package is required. Tests use temporary
@@ -76,10 +97,12 @@ data-collection/            Phase 1 — data acquisition
   src/dataset_validator.py  integrity / format / size checks
   data/{raw,processed,checksums}/
 preprocess.py                Phase 2 — validated HBV preprocessing
-analyze_mutations.py         Phase 3 (empty)
+analyze_mutations.py         Phase 3 — reference-aligned mutation detection
 statistics.py                Phase 4 (empty)
 report/report.md             Phase 5 (not started)
 tests/preprocessing/         Phase 2 offline unittest suite
+tests/task3/                  Phase 3 offline unittest suite
+TASK3.md                     Phase 3 method, usage and limitations
 PREPROCESSING.md             Phase 2 policies and output documentation
 ```
 

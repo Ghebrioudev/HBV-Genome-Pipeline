@@ -17,17 +17,20 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 
 ## 2. Current state (important)
 
-**Phase 1 (data collection) is implemented; the analysis stages are still empty.**
+**Phase 1 (data collection) and Phase 2 (preprocessing) are implemented; Phases 3–5 remain unimplemented.**
 
 - ✅ `data-collection/` — NCBI retrieval, local-file pathway, validation,
   checksums, documentation. `download.sh` at the root delegates to it.
-- ⬜ Empty (0 bytes): `preprocess.py`, `analyze_mutations.py`, `statistics.py`,
-  `run.sh`, `report/report.md`.
+- ✅ `preprocess.py` — Phase 2 preprocessing (stdlib-only); reads Task 1 processed inputs and writes cleaned HBV data plus audit reports.
+- ⬜ Empty (0 bytes): `analyze_mutations.py`, `statistics.py`, `run.sh`, `report/report.md`.
+- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/run_tests.sh` runs both Phase 1 and Phase 2 suites.
 - `results/mutations.csv`, `results/summary.csv` remain empty placeholders.
-- `data-collection/data/raw/` and `processed/` hold a real 405 MB dataset and are
-  git-ignored; `data-collection/data/checksums/` is committed.
-- Phase 1 has a dependency-free `unittest` suite: `data-collection/tests/`
-  (57 tests, offline, ~0.2 s). There is still no CI and no lint config.
+- The bundled Task 1 snapshot occupies approximately 431 MB under
+  `data-collection/data/raw/` and 188 MB under `data-collection/data/processed/`;
+  both input directories are git-ignored. Sizes vary with the retrieved snapshot.
+  `data-collection/data/checksums/` is committed.
+- Phase 1 has a dependency-free `unittest` suite: `data-collection/tests/` (57 tests).
+  Phase 2 has 20 offline tests in `tests/preprocessing/`. There is still no CI or lint config.
 
 **Consequence:** Phase 1 established the conventions. When you implement an
 analysis stage, follow `data-collection/src/` (stdlib-only, `argparse`, `main()`,
@@ -47,18 +50,25 @@ alongside the existing offline suite.
 | `data-collection/dataset_documentation.md` | Dataset provenance, scope, checksums | yes |
 | `data-collection/data/raw/`, `processed/` | Downloaded + normalised data | **no** (git-ignored) |
 | `data-collection/data/checksums/` | SHA-256 lists and validation reports | yes |
-| `preprocess.py` | Clean/filter/align sequences (Phase 2) | yes |
+| `preprocess.py` | Taxonomy filtering, sequence validation, duplicate detection and reporting (Phase 2; no alignment) | yes |
+| `PREPROCESSING.md` | Phase 2 scientific rules, outputs and execution | yes |
+| `tests/preprocessing/` | Phase 2 offline unit tests | yes |
+| `tests/run_tests.sh` | Runs Phase 1 and Phase 2 test suites | yes |
 | `analyze_mutations.py` | Detect mutations/variants vs. reference (Phase 3) | yes |
 | `statistics.py` | Aggregate stats + figures into `results/figures/` (Phase 4) | yes |
 | `run.sh` | Orchestrator for the analysis stages | yes |
 | `data-collection/tests/data/` | Real 2-record fixtures for the local pathway | yes |
 | `data-collection/tests/test_*.py` | Phase 1 unittest suite (offline, stdlib only) | yes |
 | `data-collection/tests/run_tests.sh` | Test runner | yes |
-| `data/` | Legacy root data dir (only `.gitkeep`) | **no** |
-| `results/` | Machine-readable outputs (`mutations.csv`, `summary.csv`) | headers only |
+| `data/processed/` | Generated Task 2 HBV FASTA, metadata and manifest (git-ignored) | **no** |
+| `results/` | Task 2 audit reports under `preprocessing/`; `mutations.csv` and `summary.csv` remain empty Phase 3/4 placeholders | mixed |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
-| `report/report.md` | Human-readable final report | yes |
+| `report/report.md` | Human-readable final report (currently empty; Phase 5 not started) | yes |
 | `SOURCES.md` | Provenance: URLs, accessions, retrieval dates | yes |
+
+**Archive note:** the supplied Task 2 ZIP is a source/data snapshot and does not
+include a `.git/` directory. Branch, remote, and commit state must therefore be
+verified in the actual Git clone; this archive cannot establish or change it.
 
 ### Phase 1 output contract (consume this in later stages)
 
@@ -67,8 +77,8 @@ must not re-implement retrieval:
 
 | File | Format | Notes |
 |---|---|---|
-| `sequences.fasta` | FASTA | 142,254 records, 131,955,960 nt, 140 MB |
-| `metadata.csv` | CSV | 142,254 rows, same order as the FASTA |
+| `sequences.fasta` | FASTA | Current bundled snapshot: 140,855 records, 129,365,332 nt |
+| `metadata.csv` | CSV | 140,855 rows; accession order is not guaranteed to match FASTA order |
 | `manifest.json` | JSON | record count + SHA-256 of the outputs |
 
 `metadata.csv` columns, in order: `accession, length, completeness, is_annotated,
@@ -77,10 +87,11 @@ organism_name, tax_id, isolate, lineage, submitter`.
 
 Key facts agents must not re-derive by hand:
 
-- The dataset is **family-wide** (*Hepadnaviridae*, taxid 10404): 140,866 records
-  (99.0 %) are HBV, 1,388 (1.0 %) are other hepadnaviruses. Filter with
-  `'Hepatitis B virus' in row['lineage']` if a stage needs HBV only.
-- 128,154 records are `PARTIAL`, 14,100 are `COMPLETE`.
+- The earlier documented retrieval was family-wide (*Hepadnaviridae*, taxid 10404).
+  The **current files bundled in the Task 2 archive are different**: `retrieval.json`
+  specifies taxon 10407 and the Task 1 manifest reports 140,855 records. For this
+  current snapshot, 127,395 records are `PARTIAL` and 13,460 are `COMPLETE`.
+  The current machine-readable retrieval and processed manifest are authoritative.
 - The HBV reference genome for mutation calling is `NC_003977.2`.
 - Full provenance and checksums: `data-collection/dataset_documentation.md`.
 
@@ -182,22 +193,21 @@ rewrite or force-push shared branches.
 
 ## 9. How to verify a change
 
-There is no test suite yet. Until one exists:
-
 ```bash
 bash -n download.sh run.sh data-collection/download.sh data-collection/scripts/validate_dataset.sh
 python3 -m py_compile *.py data-collection/src/*.py
 
 # Phase 1 test suite (stdlib unittest, offline)
-data-collection/tests/run_tests.sh
+bash tests/run_tests.sh
 
 # dataset is intact
 (cd data-collection && sha256sum -c data/checksums/dataset.sha256)
 ```
 
-The suite covers the validator, the local and NCBI loaders, the HTTP client
-(mocked — **no network**), and the shell CLI contract. It must stay green; add a
-test with every behaviour change.
+The Task 1 suite covers the validator, local and NCBI loaders, the HTTP client
+(mocked — **no network**), and the shell CLI contract. Task 2 has its own offline
+unit tests in `tests/preprocessing/`. Both suites must stay green; add tests for
+every behaviour change.
 
 > `./download.sh --file <x>` **overwrites** `data-collection/data/processed/`.
 > Use `dataset_validator.py` (or the fixture tests) for read-only checks; only run
@@ -210,14 +220,14 @@ installed** and must not be assumed.
 
 ## 10. Open decisions (not yet settled)
 
-- **Alignment strategy** for `analyze_mutations.py` — pure Python position-by-position
-  comparison (no dependencies, works today) vs. installing MAFFT/BLAST (stronger
-  multiple alignment, needs network + `apt`). Do not assume one; confirm before building
-  that stage.
-- **Taxonomic scope for downstream stages** — the Phase 1 dataset is the
-  *Hepadnaviridae* family (taxid 10404) and contains ~1 % non-HBV records. Decide
-  whether analysis filters to HBV (`lineage` contains `Hepatitis B virus`) or keeps
-  the family.
+- **Alignment strategy** for `analyze_mutations.py` — choose a suitable alignment
+  workflow for complete and partial sequences. Task 2 deliberately does not align.
+- **Task 3 mutation scope** — decide whether comparisons are whole-genome, region-specific,
+  or both, and how ambiguous positions are handled in variant calls.
+
+The Task 2 taxonomic scope is resolved: retain taxid 10407 or records whose NCBI
+lineage contains the exact `Hepatitis B virus` taxon; report non-HBV family members
+and unresolved taxonomy separately.
 - **CSV schemas** in section 6 are proposals, not yet implemented or validated.
   Phase 1 outputs (`sequences.fasta`, `metadata.csv`) are defined in
   `data-collection/dataset_documentation.md` §7.
@@ -225,8 +235,8 @@ installed** and must not be assumed.
 ## 11. Definition of done for a stage
 
 - Script is non-empty, runnable, and documented (usage + inputs + outputs).
-- Reads only from `data-collection/data/processed/` (or documented inputs) and
-  writes only to `results/`, `results/figures/`, or `report/`.
+- Task 2 reads only from `data-collection/data/processed/` and writes its cleaned
+  dataset to `data/processed/` plus audit reports to `results/preprocessing/`.
 - Failure modes exit non-zero with an actionable message.
 - Outputs are written atomically or staged, so a failed run does not corrupt a
   previous good result.

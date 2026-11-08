@@ -62,8 +62,10 @@ To test the integration layer without downloading data:
 bash tests/run_integration_test.sh
 ```
 
-The integration test copies the project to a temporary directory, runs a clean
-offline pipeline execution, and verifies that invalid options fail.
+The integration test builds a minimal Task 1 fixture in a temporary directory and
+runs all four stages through `run.sh`, with a deterministic MAFFT stub in place
+of the real binary. It checks the mutation table contents, the summary outputs,
+the figures, invalid-option handling and loud failure when the input is missing.
 
 ## Current limitations
 
@@ -83,7 +85,5 @@ offline pipeline execution, and verifies that invalid options fail.
   genotype column.
 - **Uncertain calls are excluded** from frequencies (469,448 IUPAC-ambiguous
   events) but remain in the mutation table.
-- **The integration test is orchestration-only**: it substitutes `PYTHON=true`,
-  so it verifies stage ordering and option handling, not the numeric stages.
 
 No clinical or resistance interpretation is made.

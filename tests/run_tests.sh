@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run the offline test suites for Tasks 1 through 4.
+# Run the offline test suites for Tasks 1 through 5.
 set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -14,3 +14,4 @@ python3 -m unittest discover -s data-collection/tests -p 'test_*.py' -v
 python3 -m unittest discover -s tests/preprocessing -p 'test_*.py' -v
 python3 -m unittest discover -s tests/task3 -p 'test_*.py' -v
 python3 -m unittest discover -s tests/task4 -p 'test_*.py' -v
+python3 -m unittest discover -s tests/integration -p 'test_*.py' -v

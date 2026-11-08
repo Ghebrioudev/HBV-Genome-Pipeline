@@ -24,7 +24,7 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 - ✅ `preprocess.py` — Phase 2 preprocessing (stdlib-only); reads Task 1 processed inputs and writes cleaned HBV data plus audit reports.
 - ✅ `analyze_mutations.py` — Task 3 reference-anchored alignment and mutation calling.
 - ✅ `statistics.py` — Task 4 mutation statistics and figures; `run.sh` orchestrates the pipeline.
-- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/task4/` — Phase 4 offline tests; `tests/run_tests.sh` runs all four suites.
+- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/task4/` — Phase 4 offline tests; `tests/integration/` — clean-start fixture that runs all four stages through `run.sh` with a deterministic MAFFT stub; `tests/run_tests.sh` runs all five suites (102 tests).
 - `results/mutations.csv` is generated locally by Task 3 (~813 MB, 10.5 M rows)
   and is git-ignored; regenerate it with `python3 analyze_mutations.py`. Task 4
   writes summary statistics and figures to `results/`.

@@ -1,20 +1,10 @@
 #!/usr/bin/env bash
+# Clean-start integration test: runs preprocess -> analyze -> statistics on a
+# tiny fixture through run.sh. MAFFT is replaced by a deterministic stub, so
+# this stays offline and fast.
 set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEST_DIR="$(mktemp -d)"
-trap 'rm -rf "$TEST_DIR"' EXIT
+cd "$BASE_DIR"
 
-cp -R "$BASE_DIR/." "$TEST_DIR/"
-
-if ! PYTHON=true "$TEST_DIR/run.sh" --clean --skip-download >/dev/null; then
-    printf 'Integration test failed: clean pipeline run did not complete.\n' >&2
-    exit 1
-fi
-
-if "$TEST_DIR/run.sh" --not-a-real-option >/dev/null 2>&1; then
-    printf 'Integration test failed: unknown options were accepted.\n' >&2
-    exit 1
-fi
-
-printf 'Integration test passed.\n'
+exec python3 -m unittest discover -s tests/integration -p 'test_*.py' -v

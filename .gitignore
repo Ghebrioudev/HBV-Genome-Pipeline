@@ -6,6 +6,7 @@ data/*
 
 # Large generated outputs — regenerate with ./run.sh
 results/mutations.csv
+results/figures/*.png
 
 # Python
 __pycache__/

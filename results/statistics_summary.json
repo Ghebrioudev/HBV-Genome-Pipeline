@@ -1,0 +1,8 @@
+{
+  "denominator": 128372,
+  "denominator_basis": "metadata sequences minus skipped sequences",
+  "n_confirmed_calls": 10093413,
+  "n_uncertain_calls_excluded": 469448,
+  "n_distinct_mutations": 16215,
+  "genotype_comparison": false
+}

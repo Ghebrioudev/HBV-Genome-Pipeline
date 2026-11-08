@@ -5,7 +5,13 @@
 set -euo pipefail
 
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PYTHON="${PYTHON:-python3}"
+# Prefer a project-local virtual environment when present, so the Phase 4
+# dependencies are found without the caller having to activate it.
+if [[ -z "${PYTHON:-}" && -x "$BASE_DIR/.venv/bin/python" ]]; then
+    PYTHON="$BASE_DIR/.venv/bin/python"
+else
+    PYTHON="${PYTHON:-python3}"
+fi
 SKIP_DOWNLOAD=0
 CLEAN_RESULTS=0
 

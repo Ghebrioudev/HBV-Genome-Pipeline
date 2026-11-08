@@ -25,7 +25,9 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 - ✅ `analyze_mutations.py` — Task 3 reference-anchored alignment and mutation calling.
 - ✅ `statistics.py` — Task 4 mutation statistics and figures; `run.sh` orchestrates the pipeline.
 - `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/task4/` — Phase 4 offline tests; `tests/run_tests.sh` runs all four suites.
-- `results/mutations.csv` contains the Task 3 output schema; Task 4 writes summary statistics and figures to `results/`.
+- `results/mutations.csv` is an empty placeholder until Task 3 is run on a real
+  input; regenerating it requires MAFFT. Task 4 writes summary statistics and
+  figures to `results/`.
 - The bundled Task 1 snapshot occupies approximately 431 MB under
   `data-collection/data/raw/` and 188 MB under `data-collection/data/processed/`;
   both input directories are git-ignored. Sizes vary with the retrieved snapshot.

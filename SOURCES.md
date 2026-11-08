@@ -53,7 +53,7 @@ from, when it was retrieved, and how it is identified.
 |---|---|
 | Tool | MAFFT 7 (minimum supported version: 7.487) |
 | Method | `--auto --addfragments` against the one-record `NC_003977.2` reference alignment |
-| Batch size | 1,000 sample fragments per invocation by default |
+| Batch size | 500 sample fragments per invocation by default (`--batch-size`) |
 | Thread count | 1 by default; configurable |
 | Documentation | https://mafft.cbrc.jp/alignment/software/addsequences.html |
 | Installation | https://mafft.cbrc.jp/alignment/software/linux.html |

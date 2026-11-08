@@ -17,21 +17,22 @@ download.sh   preprocess.py   analyze_mutations.py    statistics.py        repor
 
 ## 2. Current state (important)
 
-**Phases 1–3 (data collection, preprocessing, and mutation detection) are implemented; Phases 4–5 remain unimplemented.**
+**Phases 1–4 (data collection, preprocessing, mutation detection, and statistics) are implemented; Phase 5 remains unimplemented.**
 
 - ✅ `data-collection/` — NCBI retrieval, local-file pathway, validation,
   checksums, documentation. `download.sh` at the root delegates to it.
 - ✅ `preprocess.py` — Phase 2 preprocessing (stdlib-only); reads Task 1 processed inputs and writes cleaned HBV data plus audit reports.
 - ✅ `analyze_mutations.py` — Task 3 reference-anchored alignment and mutation calling.
-- ⬜ Empty (0 bytes): `statistics.py`, `run.sh`, `report/report.md`.
-- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/run_tests.sh` runs all three suites.
-- `results/mutations.csv` contains the Task 3 output header; `results/summary.csv` remains the empty Task 4 placeholder.
+- ✅ `statistics.py` — Task 4 mutation statistics and figures; `run.sh` orchestrates the pipeline.
+- `tests/preprocessing/` — Phase 2 offline `unittest` coverage; `tests/task3/` — Phase 3 offline tests; `tests/task4/` — Phase 4 offline tests; `tests/run_tests.sh` runs all four suites.
+- `results/mutations.csv` contains the Task 3 output schema; Task 4 writes summary statistics and figures to `results/`.
 - The bundled Task 1 snapshot occupies approximately 431 MB under
   `data-collection/data/raw/` and 188 MB under `data-collection/data/processed/`;
   both input directories are git-ignored. Sizes vary with the retrieved snapshot.
   `data-collection/data/checksums/` is committed.
 - Phase 1 has a dependency-free `unittest` suite: `data-collection/tests/` (57 tests).
-  Phase 2 has 20 offline tests in `tests/preprocessing/`. There is still no CI or lint config.
+  Phase 2 has 20 offline tests in `tests/preprocessing/`; Task 3 and Task 4 have
+  focused offline suites. There is still no CI or lint config.
 
 **Consequence:** Phase 1 established the conventions. When you implement an
 analysis stage, follow `data-collection/src/` (stdlib-only, `argparse`, `main()`,
@@ -54,7 +55,7 @@ alongside the existing offline suite.
 | `preprocess.py` | Taxonomy filtering, sequence validation, duplicate detection and reporting (Phase 2; no alignment) | yes |
 | `PREPROCESSING.md` | Phase 2 scientific rules, outputs and execution | yes |
 | `tests/preprocessing/` | Phase 2 offline unit tests | yes |
-| `tests/run_tests.sh` | Runs Phase 1 and Phase 2 test suites | yes |
+| `tests/run_tests.sh` | Runs the Phase 1–4 test suites | yes |
 | `analyze_mutations.py` | MAFFT reference alignment and mutation calling (Phase 3) | yes |
 | `TASK3.md` | Phase 3 method, inputs, outputs, execution and limitations | yes |
 | `tests/task3/` | Phase 3 offline unit tests and optional MAFFT integration check | yes |
@@ -64,9 +65,9 @@ alongside the existing offline suite.
 | `data-collection/tests/test_*.py` | Phase 1 unittest suite (offline, stdlib only) | yes |
 | `data-collection/tests/run_tests.sh` | Test runner | yes |
 | `data/processed/` | Generated Task 2 HBV FASTA, metadata and manifest (git-ignored) | **no** |
-| `results/` | Task 2 audit reports; Task 3 mutation table; Task 4 summary placeholder | mixed |
+| `results/` | Task 2 audit reports; Task 3 mutation table; Task 4 summaries and figures | mixed |
 | `results/figures/` | Generated plots | no (only `.gitkeep`) |
-| `report/report.md` | Human-readable final report (currently empty; Phase 5 not started) | yes |
+| `report/report.md` | Human-readable final report draft; Phase 5 is not started | yes |
 | `SOURCES.md` | Provenance: URLs, accessions, retrieval dates | yes |
 
 **Archive note:** the supplied Task 2 ZIP is a source/data snapshot and does not

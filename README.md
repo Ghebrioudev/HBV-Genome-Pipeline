@@ -10,16 +10,18 @@ genomic data using Shell and Python.
 | 1 | Data collection (NCBI API + local file) | ✅ implemented |
 | 2 | Preprocessing | ✅ implemented |
 | 3 | Sequence comparison / mutation detection | ✅ implemented |
-| 4 | Statistics and figures | not started |
+| 4 | Statistics and figures | ✅ implemented |
 | 5 | Report | not started |
 
 ## Requirements
 
-- Python ≥ 3.10 (tested on 3.12.3) — **standard library only**
+- Python ≥ 3.10 (tested on 3.12.3)
 - bash ≥ 4
 - MAFFT ≥ 7.487 for Task 3 (system executable)
+- pandas and matplotlib for Task 4
 
-No third-party Python packages are required; Task 3 uses the MAFFT command-line tool.
+Task 1–3 use the Python standard library; Task 4 additionally requires pandas and
+matplotlib.
 
 ## Quick start
 
@@ -74,10 +76,11 @@ known limitations and options.
 ## Tests
 
 ```bash
-bash tests/run_tests.sh                 # Task 1 + Task 2 + Task 3 suites, offline
+bash tests/run_tests.sh                 # Task 1 + Task 2 + Task 3 + Task 4 suites, offline
 bash data-collection/tests/run_tests.sh # Task 1 suite only
 python3 -m unittest discover -s tests/preprocessing -v # Task 2 only
 python3 -m unittest discover -s tests/task3 -v         # Task 3 only
+python3 -m unittest discover -s tests/task4 -v         # Task 4 only
 ```
 
 No `pytest` or third-party Python package is required. Tests use temporary
@@ -98,7 +101,7 @@ data-collection/            Phase 1 — data acquisition
   data/{raw,processed,checksums}/
 preprocess.py                Phase 2 — validated HBV preprocessing
 analyze_mutations.py         Phase 3 — reference-aligned mutation detection
-statistics.py                Phase 4 (empty)
+statistics.py                Phase 4 — statistics and figures
 report/report.md             Phase 5 (not started)
 tests/preprocessing/         Phase 2 offline unittest suite
 tests/task3/                  Phase 3 offline unittest suite
@@ -134,9 +137,8 @@ For an offline integration run when input data has already been collected:
 
 The `--clean` option removes generated CSV files and figures before running.
 The orchestrator uses `set -euo pipefail`, checks required stage files, and
-stops immediately when a stage fails. The individual analysis stages are
-currently placeholders owned by the other project members; their successful
-execution does not yet indicate that biological results were generated.
+stops immediately when a stage fails. Task 3 requires MAFFT, and Task 4 requires
+pandas and matplotlib.
 
 ## Integration test
 

@@ -34,9 +34,6 @@ offline pipeline execution, and verifies that invalid options fail.
 
 ## Current limitations
 
-The stage scripts are currently placeholders while the other project members
-complete their work. Therefore, this integration layer verifies command
-ordering, path handling, error propagation, and clean-start behavior; it does
-not claim that mutation tables, summary statistics, figures, or clinical
-interpretations have been produced. Those outputs must be validated after the
-corresponding analysis stages are implemented.
+The pipeline currently produces mutation tables, summary statistics, and
+figures. Biological interpretation and a finalized clinical discussion remain
+outside the scope of this report.

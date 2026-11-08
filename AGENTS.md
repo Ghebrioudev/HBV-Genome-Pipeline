@@ -151,11 +151,21 @@ sample_id,reference_accession,position,reference_base,observed_base,variation_ty
 
 Coordinates are 1-based reference positions; insertions use a between-base anchor such as `125^126`. See `TASK3.md` for the precise event and uncertainty rules.
 
-`results/summary.csv` — one row per sample:
+`results/summary.csv` — one row per distinct mutation, written by Task 4:
 
 ```
-sample_id,genotype,length,num_mutations,mutations_per_kb,dominant_region
+mutation,position,ref,alt,type,n_sequences,frequency
 ```
+
+`position` keeps the insertion anchor form (`125^126`). `n_sequences` is the
+number of distinct sequences carrying the mutation and `frequency` is
+`n_sequences / denominator` (the denominator is metadata sequences minus
+skipped sequences unless `--total-sequences` is given).
+
+`results/mutation_types.csv` — one row per variant type
+(`type,n_mutations,n_sequences`); `results/statistics_summary.json` — denominator,
+call counts and the genotype-comparison flag. Figures are written to
+`results/figures/` and are not committed.
 
 If a downstream schema changes, update this file. Reflect the corresponding interpretation in `report/report.md` when Task 5 is implemented; Task 3 does not write the final report.
 

@@ -8,6 +8,21 @@ Status legend: **MET** = requirement satisfied and evidenced · **PARTIAL** =
 implemented but not evidenced, not reproducible, or conditionally skipped ·
 **MISSING** = required deliverable absent.
 
+> **Resolution (2026-11-08, branch `anti-sprint`).** Every P0/P1 item below has
+> been closed; the audit is kept as the record of the starting state.
+>
+> - One canonical dataset: 142,254 downloaded → **140,855 HBV** retained by Task 2.
+> - MAFFT 7.525 installed (built from source, no sudo); Task 3 produced
+>   **10,562,861 mutation rows** with all nine validation gates passing.
+> - `statistics.py` streams the table (320 MB peak) and writes `summary.csv`,
+>   `mutation_types.csv`, `statistics_summary.json` and three figures.
+> - `report/report.md` now has Results plus accurate limitations.
+> - The integration test executes all four stages on a fixture; the suite is
+>   **102 tests**, and `./run.sh --skip-download` completed on the full dataset.
+>
+> What remains are scientific caveats (duplicate sequences, no genotype column,
+> no codon annotation), not missing deliverables.
+
 ---
 
 ## 1. Source plan (verbatim scope)

@@ -11,7 +11,7 @@ genomic data using Shell and Python.
 | 2 | Preprocessing | ✅ implemented |
 | 3 | Sequence comparison / mutation detection | ✅ implemented |
 | 4 | Statistics and figures | ✅ implemented |
-| 5 | Report | not started |
+| 5 | Report | ✅ implemented |
 
 ## Requirements
 

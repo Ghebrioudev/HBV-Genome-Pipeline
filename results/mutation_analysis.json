@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "stage": "Task 3 \u2014 Sequence Comparison and Mutation Detection",
-  "created_at": "2026-11-08T19:36:08.658970+00:00",
-  "started_at": "2026-11-08T19:17:29.705499+00:00",
+  "created_at": "2026-11-08T21:51:42.910754+00:00",
+  "started_at": "2026-11-08T21:29:39.938303+00:00",
   "input_fasta": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/data/processed/hbv_sequences.fasta",
   "metadata_csv": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/data/processed/hbv_metadata.csv",
   "reference": {

@@ -5,11 +5,11 @@
     "duplicate_accession_groups": 0,
     "duplicate_accession_identical_records_removed": 0,
     "empty_sequence_records": 0,
-    "excluded_non_hbv_records": 0,
+    "excluded_non_hbv_records": 1399,
     "extra_records_in_identical_sequence_groups": 31288,
     "identical_sequence_groups": 11912,
-    "input_fasta_records": 140855,
-    "input_metadata_rows": 140855,
+    "input_fasta_records": 142254,
+    "input_metadata_rows": 142254,
     "metadata_rows_without_FASTA_record": 0,
     "records_containing_U": 0,
     "records_containing_gap": 0,
@@ -21,10 +21,10 @@
     "review_required_records": 0,
     "taxonomy_classification": {
       "hbv_candidates": 140855,
-      "non_hbv_excluded": 0,
+      "non_hbv_excluded": 1399,
       "unresolved": 0
     },
-    "unique_fasta_accessions": 140855,
+    "unique_fasta_accessions": 142254,
     "unresolved_taxonomy_records": 0,
     "unsupported_symbol_records": 0
   },
@@ -32,17 +32,17 @@
     "manifest.json": {
       "bytes": 427,
       "path": "data-collection/data/processed/manifest.json",
-      "sha256": "ae58328401f0b8e629d168724b0b1bafe80a79ee69808db2b3cfe52bcaca0211"
+      "sha256": "b75df2f425fcb4dcf01b1f53d31085114c430b160a01125234f1dcb6a03fed03"
     },
     "metadata.csv": {
-      "bytes": 52633515,
+      "bytes": 53153257,
       "path": "data-collection/data/processed/metadata.csv",
-      "sha256": "f1057b0449fefbd992ee0ffc0d10f71a9fc52eed2b9d75746eaac2637efa9930"
+      "sha256": "9abb45ae4caa3fa5001ba775fe2613220a551410adc3a5791c9f586820874bff"
     },
     "sequences.fasta": {
-      "bytes": 143941117,
+      "bytes": 146679201,
       "path": "data-collection/data/processed/sequences.fasta",
-      "sha256": "5c7378fa127232bb54ba4faa7b58cd343d5d8e823e1092a39d6f711e37e9c483"
+      "sha256": "b39fe94375f8e8f3f9dfcf02e275a8f2d4c8472110a1b0e41a6a5086603eeb3a"
     }
   },
   "policies": {
@@ -91,7 +91,7 @@
     "minimum": 1
   },
   "schema_version": 1,
-  "source_manifest_created_at": "2026-11-03T14:34:40+00:00",
+  "source_manifest_created_at": "2026-10-31T09:28:42+00:00",
   "stage": "Task 2 - Data Preprocessing",
   "warnings": [
     "Records with missing metadata length are retained with the original field left blank; actual sequence length is recorded separately.",

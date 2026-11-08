@@ -52,11 +52,12 @@ from, when it was retrieved, and how it is identified.
 | Field | Value |
 |---|---|
 | Tool | MAFFT 7 (minimum supported version: 7.487) |
-| Method | `--auto --addfragments` against the one-record `NC_003977.2` reference alignment |
+| Version used | v7.525 (2024/Mar/13) |
+| Method | `--6merpair --addfragments` against the one-record `NC_003977.2` reference alignment |
 | Batch size | 500 sample fragments per invocation by default (`--batch-size`) |
 | Thread count | 1 by default; configurable |
 | Documentation | https://mafft.cbrc.jp/alignment/software/addsequences.html |
-| Installation | https://mafft.cbrc.jp/alignment/software/linux.html |
+| Installation | Built from `mafft-7.525-without-extensions-src.tgz`; installed under `~/.local/opt/mafft-7.525` with a wrapper on `PATH` |
 
 The exact executable version used by a run is captured in
 `results/mutation_analysis.json`. The minimum excludes MAFFT 7.463–7.486, for

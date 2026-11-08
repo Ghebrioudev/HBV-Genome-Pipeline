@@ -4,6 +4,9 @@ data-collection/data/processed/
 data/*
 !data/.gitkeep
 
+# Large generated outputs — regenerate with ./run.sh
+results/mutations.csv
+
 # Python
 __pycache__/
 *.py[cod]

@@ -31,7 +31,7 @@ Task 3 is done when, on the canonical dataset:
 1. `python3 preprocess.py` has produced `data/processed/hbv_sequences.fasta` and
    `hbv_metadata.csv`.
 2. `python3 analyze_mutations.py` exits 0 and atomically writes all three outputs.
-3. `results/mutations.csv` has the 11-column schema and plausible row counts.
+3. `results/mutations.csv` has the 10-column schema and plausible row counts.
 4. `results/mutation_analysis.json` records this machine, this MAFFT version, and
    counts that reconcile with `mutation_analysis_skipped.csv`.
 5. A documented validation pass (gates in §6) is recorded.
@@ -54,6 +54,12 @@ unaffected by the choice; only the counts change.
 
 `sudo apt install mafft` → candidate 7.505 (≥ 7.487, supported).
 Verify with `mafft --version`; the version is captured in the JSON report.
+
+**Resolved without sudo:** MAFFT 7.525 was built from the official
+`mafft-7.525-without-extensions-src.tgz` and installed under
+`~/.local/opt/mafft-7.525`, with `~/.local/bin/mafft` setting
+`MAFFT_BINARIES` and exec'ing `core/mafft`. `mafft --version` reports
+`v7.525 (2024/Mar/13)` and `~/.local/bin` is on `PATH`.
 
 ### D3 — commit policy for the mutation table
 
@@ -133,7 +139,7 @@ python3 analyze_mutations.py --input "$TMP/smoke.fasta" \
 head -1 "$TMP/mutations.csv"
 ```
 
-Gate: header matches the 11 columns, rows parse, JSON counts reconcile, exit 0.
+Gate: header matches the 10 columns, rows parse, JSON counts reconcile, exit 0.
 
 ### Phase 4 — full run
 

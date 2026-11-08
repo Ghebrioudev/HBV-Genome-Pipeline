@@ -149,11 +149,15 @@ insertions, deletions, partial coverage, ambiguity, thresholds and invalid
 inputs. A real-MAFFT integration check runs automatically when MAFFT is
 installed and is skipped otherwise.
 
-**Validation note for this delivered archive:** MAFFT was not installed in the
-build environment. The offline tests passed, but the 140,855-record project
-dataset was not aligned here and no biological mutation counts are claimed.
-Install MAFFT and execute the command above to create the real CSV and JSON
-analysis outputs.
+**Validation note for the executed run (2026-11-08):** MAFFT 7.525
+(2024/Mar/13) aligned the full 140,855-record Task 2 dataset in 18 m 39 s
+(262 batches, 500 fragments/batch, 1 thread). Of 130,837 eligible records,
+128,372 were analysed and 12,482 were skipped (10,017 below the 100-nt minimum,
+2,464 below 70 % identity, 1 with insufficient aligned bases). The run produced
+10,562,861 mutation rows (10,093,413 definitive, 469,448 uncertain): 9,093,190
+substitutions, 976,187 deletions, 24,036 insertions and 469,448 ambiguous calls.
+The table reconciles with `mutation_analysis.json`, all positions fall within
+1..3182, and two identical reruns of a 200-record subset were byte-identical.
 
 ## Known limitations
 

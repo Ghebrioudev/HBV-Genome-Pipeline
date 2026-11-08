@@ -23,11 +23,11 @@ log = logging.getLogger("statistics")
 
 # Internal name -> accepted column names in the input CSV.
 ALIASES = {
-    "accession": ["sequence_accession", "accession"],
+    "accession": ["sequence_accession", "accession", "sample_id"],
     "position": ["position", "reference_position"],
-    "ref": ["reference_nucleotide", "ref"],
-    "alt": ["sample_nucleotide", "observed_nucleotide", "alt"],
-    "type": ["mutation_type", "type"],
+    "ref": ["reference_nucleotide", "ref", "reference_base"],
+    "alt": ["sample_nucleotide", "observed_nucleotide", "alt", "observed_base"],
+    "type": ["mutation_type", "type", "variation_type"],
 }
 AMBIGUOUS = set("RYKMSWBDHVN")
 GENOTYPE_COLUMNS = ["genotype", "Genotype", "hbv_genotype"]

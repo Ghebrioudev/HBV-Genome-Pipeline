@@ -117,3 +117,32 @@ The machine-readable provenance is in
 `data-collection/data/processed/manifest.json`. Some historical Task 1
 documentation files still describe an earlier family-wide taxon `10404` snapshot;
 see [`PREPROCESSING.md`](PREPROCESSING.md) for this discrepancy.
+
+## Running the pipeline
+
+Run all stages in order from the repository root:
+
+```bash
+./run.sh
+```
+
+For an offline integration run when input data has already been collected:
+
+```bash
+./run.sh --clean --skip-download
+```
+
+The `--clean` option removes generated CSV files and figures before running.
+The orchestrator uses `set -euo pipefail`, checks required stage files, and
+stops immediately when a stage fails. The individual analysis stages are
+currently placeholders owned by the other project members; their successful
+execution does not yet indicate that biological results were generated.
+
+## Integration test
+
+The offline integration test runs the pipeline from a temporary clean copy and
+checks that invalid command-line options fail:
+
+```bash
+bash tests/run_integration_test.sh
+```

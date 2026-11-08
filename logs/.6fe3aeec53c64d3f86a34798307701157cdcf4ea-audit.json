@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/logs/.6fe3aeec53c64d3f86a34798307701157cdcf4ea-audit.json",
+    "files": [
+        {
+            "date": 1793438439062,
+            "name": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/logs/mcp-puppeteer-2026-10-31.log",
+            "hash": "d545458368471ca13de1c421bb3d87f3c85601d4761a2e957eb5906fc8bfa556"
+        },
+        {
+            "date": 1794160052374,
+            "name": "/home/ant-caffien/Desktop/HBV-Genome-Pipeline/logs/mcp-puppeteer-2026-11-08.log",
+            "hash": "6b36942cf5ca8c701990932aa1e508c159a46e1b548144f991ea601cfb8332b1"
+        }
+    ],
+    "hashType": "sha256"
+}

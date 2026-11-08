@@ -1,0 +1,5 @@
+4b40504b9d718336b19ce451ff7e117494105e58e2351fee9563af7886320eec  data/raw/extracted/README.md
+84202c88a09dffe853b9b65894cef7b71e7163631acf173ee13cb1302ff58e45  data/raw/extracted/md5sum.txt
+889f13701f5fa4d65ffed3b98e4328afcdb86705f39dc9c6addde006bc339942  data/raw/extracted/ncbi_dataset/data/data_report.jsonl
+99dbf09cc860359d9a8e548da7c6d891fc9220c055b28f1f2e8d5cece66d5695  data/raw/extracted/ncbi_dataset/data/dataset_catalog.json
+5c7378fa127232bb54ba4faa7b58cd343d5d8e823e1092a39d6f711e37e9c483  data/raw/extracted/ncbi_dataset/data/genomic.fna

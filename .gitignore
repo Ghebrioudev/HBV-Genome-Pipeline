@@ -1,0 +1,13 @@
+# Large generated datasets and results
+results/mutations.csv
+data-collection/data/raw/extracted/
+data-collection/data/processed/sequences.fasta
+data/processed/hbv_sequences.fasta
+
+# Temporary files
+*.save
+*.save.*
+__pycache__/
+*.py[cod]
+venv/
+.venv/

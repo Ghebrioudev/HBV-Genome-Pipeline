@@ -1,0 +1,27 @@
+{
+  "source": "ncbi_datasets_virus",
+  "endpoint": "https://api.ncbi.nlm.nih.gov/datasets/v2/virus/genome/download",
+  "retrieved_at": "2026-11-15T00:18:34+00:00",
+  "request": {
+    "annotated_only": false,
+    "complete_only": false,
+    "format": "tsv",
+    "geo_location": "",
+    "host": "",
+    "include_sequence": [
+      "GENOME"
+    ],
+    "pangolin_classification": "",
+    "refseq_only": false,
+    "released_since": "0001-01-01T00:00:00Z",
+    "taxons": [
+      "10404"
+    ],
+    "updated_since": "0001-01-01T00:00:00Z",
+    "usa_state": ""
+  },
+  "archive": "/home/ubuntu/SysProject/ProjetMaladie/HBV-Genome-Pipeline/data-collection/data/raw/ncbi_dataset.zip",
+  "archive_bytes": 32898096,
+  "archive_sha256": "968ce5165734b61df7164451d57de429c0ac22317997b3d18e88ff9d42bd324b",
+  "extracted_dir": "/home/ubuntu/SysProject/ProjetMaladie/HBV-Genome-Pipeline/data-collection/data/raw/extracted"
+}

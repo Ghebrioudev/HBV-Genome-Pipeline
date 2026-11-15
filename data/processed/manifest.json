@@ -1,0 +1,113 @@
+{
+  "deterministic_for_identical_inputs_and_configuration": true,
+  "input_files": {
+    "manifest.json": {
+      "bytes": 427,
+      "path": "data-collection/data/processed/manifest.json",
+      "sha256": "64f494da9fbc1cc7a8f418b4640dee0df091c069bcb6a84dc251a2fa36f55378"
+    },
+    "metadata.csv": {
+      "bytes": 53165248,
+      "path": "data-collection/data/processed/metadata.csv",
+      "sha256": "e90499ba688d6ca37f00617ec68151425b1b71242a9f25686da9194b6aa5e202"
+    },
+    "sequences.fasta": {
+      "bytes": 146731669,
+      "path": "data-collection/data/processed/sequences.fasta",
+      "sha256": "b02f7a2ebf188467b92ef2be03e40556d458bed05b655c3db8aeb0c1c9f3b3d1"
+    }
+  },
+  "outputs": [
+    {
+      "bytes": 143765248,
+      "path": "data/processed/hbv_sequences.fasta",
+      "sha256": "a2b5ccadb42b38ba5850f3e95e6d094bacfa695aa9fc2b8d7fa3d194e028287f"
+    },
+    {
+      "bytes": 69478134,
+      "path": "data/processed/hbv_metadata.csv",
+      "sha256": "2605306e9e3efb7521c27b210febe615b470577ce0e2818ea01abf08a32ca8ae"
+    },
+    {
+      "bytes": 91,
+      "path": "results/preprocessing/rejected_records.csv",
+      "sha256": "f92fbf212d6be2d00c091325639622c521c92af5aceaa5f4b480f0848f2c26e2"
+    },
+    {
+      "bytes": 381065,
+      "path": "results/preprocessing/excluded_non_hbv.csv",
+      "sha256": "c0c43d8b6dc2a5314d41c6cee7dfb8b72f5b2788b8c389830d940067a3655818"
+    },
+    {
+      "bytes": 61,
+      "path": "results/preprocessing/unresolved_taxonomy.csv",
+      "sha256": "b2908847e92b6528b1b6eca0a8b418c7e67aaa7dac4270e73b98bd97db6741a8"
+    },
+    {
+      "bytes": 104,
+      "path": "results/preprocessing/review_records.csv",
+      "sha256": "83b0eaa810775994c5c2f9c2682d6e5c4b139426e307d325ce1e500e9b91c10d"
+    },
+    {
+      "bytes": 55,
+      "path": "results/preprocessing/duplicate_accessions.csv",
+      "sha256": "7bb9769e7bee6ddd1ba9da3234ac7318e1beec2f99820325a2bd5e50ef0bd4c0"
+    },
+    {
+      "bytes": 6708194,
+      "path": "results/preprocessing/identical_sequences.csv",
+      "sha256": "26c7dc146c298101fcc2bc0c6c8ec140d3a79fc08ef2bbccba10269505230cf7"
+    },
+    {
+      "bytes": 4140,
+      "path": "results/preprocessing/cleaning_report.json",
+      "sha256": "b3a6538aa2b80393a5323b58050f82ad090c2bf00c34f47f13cb555d3beff30e"
+    }
+  ],
+  "processing": {
+    "configuration": {
+      "accepted_dna_symbols": "ACGTRYSWKMBDHVN",
+      "deduplicate_identical_accessions": true,
+      "min_sequence_length": null,
+      "preserve_identical_sequences_with_different_accessions": true,
+      "preserve_iupac_ambiguity": true,
+      "preserve_partial_sequences": true
+    },
+    "sequence_alignment_performed": false,
+    "software": "HBV Genome Pipeline preprocess.py",
+    "taxon_id": "10407",
+    "version": "1.0.0"
+  },
+  "record_counts": {
+    "duplicate_accession_conflict_groups": 0,
+    "duplicate_accession_conflict_records": 0,
+    "duplicate_accession_groups": 0,
+    "duplicate_accession_identical_records_removed": 0,
+    "empty_sequence_records": 0,
+    "excluded_non_hbv_records": 1399,
+    "extra_records_in_identical_sequence_groups": 31290,
+    "identical_sequence_groups": 11913,
+    "input_fasta_records": 142288,
+    "input_metadata_rows": 142288,
+    "metadata_rows_without_FASTA_record": 0,
+    "records_containing_U": 0,
+    "records_containing_gap": 0,
+    "records_in_identical_sequence_groups": 43203,
+    "records_with_missing_metadata_length": 0,
+    "rejected_fasta_records": 0,
+    "rejected_report_rows": 0,
+    "retained_records": 140889,
+    "review_required_records": 0,
+    "taxonomy_classification": {
+      "hbv_candidates": 140889,
+      "non_hbv_excluded": 1399,
+      "unresolved": 0
+    },
+    "unique_fasta_accessions": 142288,
+    "unresolved_taxonomy_records": 0,
+    "unsupported_symbol_records": 0
+  },
+  "schema_version": 1,
+  "source": "HBV Genome Pipeline Task 1 processed dataset",
+  "source_manifest_created_at": "2026-11-15T00:18:47+00:00"
+}

@@ -79,17 +79,17 @@ this final review because the review environment did not have MAFFT installed.
 The supplied results were checked for row-count and summary reconciliation,
 and the bundled input/output manifests were checked against their file hashes.
 
-The pipeline can be reproduced from the repository root after installing the
-Python requirements and MAFFT:
+The pipeline can be reproduced from the repository root after installing
+MAFFT and the Python environment (`bash scripts/setup_env.sh`):
 
 ```bash
-./run.sh --skip-download
-python3 report/make_dashboard.py
+./run.sh -s     # reuse the downloaded snapshot (checksums verified)
+./run.sh        # or: download from NCBI first
 ```
 
-The first command reprocesses the bundled Task 1 snapshot and reruns alignment
-and statistics; the second regenerates the HTML dashboard. A fresh NCBI
-retrieval can instead be performed with `./run.sh`.
+`run.sh` verifies the data checksums, reruns preprocessing, alignment and
+statistics, regenerates the HTML dashboard, checksums the results and writes
+a dated archive in `archives/`.
 
 ## 5. Limitations and conclusion
 

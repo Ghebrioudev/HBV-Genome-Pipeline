@@ -1,0 +1,10 @@
+# HBV Genome Pipeline — scheduled run (crontab template).
+#
+# Installed by scripts/install_cron.sh, which replaces @PROJECT_DIR@ with the
+# absolute path of the project. Every Sunday at 03:00 the pipeline downloads
+# a fresh NCBI snapshot (-f), reruns the whole analysis and archives the
+# results. run.sh writes its own timestamped log in logs/run_*.log; cron's
+# own output (e.g. a failure before logging starts) goes to logs/cron.log.
+#
+# m h dom mon dow  command
+0 3 * * 0  cd "@PROJECT_DIR@" && ./run.sh -f >> "@PROJECT_DIR@/logs/cron.log" 2>&1  # hbv-genome-pipeline

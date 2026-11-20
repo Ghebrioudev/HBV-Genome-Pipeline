@@ -1,0 +1,4 @@
+# Shell and Python scripts must keep LF endings to run on Linux
+*.sh text eol=lf
+*.py text eol=lf
+*.cron text eol=lf

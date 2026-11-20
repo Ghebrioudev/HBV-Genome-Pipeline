@@ -252,13 +252,17 @@ def main(argv: list[str] | None = None) -> int:
         geo_location=args.geo_location,
     )
 
+    reused_retrieved_at = None
     try:
         if archive.exists() and not args.force:
             previous = out_dir / "retrieval.json"
             previous_request = None
+            previous_retrieved_at = None
             if previous.exists():
                 try:
-                    previous_request = json.loads(previous.read_text(encoding="utf-8")).get("request")
+                    previous_manifest = json.loads(previous.read_text(encoding="utf-8"))
+                    previous_request = previous_manifest.get("request")
+                    previous_retrieved_at = previous_manifest.get("retrieved_at")
                 except (json.JSONDecodeError, OSError):
                     previous_request = None
             if previous_request != payload:
@@ -267,6 +271,7 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 try:
                     validate_zip(archive)
+                    reused_retrieved_at = previous_retrieved_at
                     log(f"[ncbi] reusing validated package {archive} (use --force to re-download)")
                 except DownloadError as exc:
                     log(f"[ncbi] existing package is invalid ({exc}); re-downloading")
@@ -284,10 +289,14 @@ def main(argv: list[str] | None = None) -> int:
         extract_zip(archive, extract_dir)
         log(f"[ncbi] extracted to {extract_dir}")
 
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
         manifest = {
             "source": "ncbi_datasets_virus",
             "endpoint": API_URL,
-            "retrieved_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            # Date of the actual download; a reused cached package keeps the
+            # date on which it was originally retrieved.
+            "retrieved_at": reused_retrieved_at or now,
+            "verified_at": now,
             "request": payload,
             "archive": str(archive),
             "archive_bytes": archive.stat().st_size,
